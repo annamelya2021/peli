@@ -1,6 +1,4 @@
-import React from "react";
 import MovieList from "./movieList";
-import App from "./App.jsx";
 import "./main.css";
 
 export const Main = () => {

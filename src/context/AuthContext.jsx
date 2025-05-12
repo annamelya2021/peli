@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import PropTypes from "prop-types"; // ← імпортуємо PropTypes
 
 const AuthContext = createContext();
 
@@ -18,6 +19,10 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("authToken");
     setIsLoggedIn(false);
+  };
+
+  AuthProvider.propTypes = {
+    children: PropTypes.node,
   };
 
   return (

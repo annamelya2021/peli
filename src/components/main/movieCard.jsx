@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import Modal from "./modal";
 import ActionButton from "./actionButton";
 import { fetchMovieVideos } from "../../services/api";
@@ -12,8 +11,6 @@ const MovieCard = ({ movie, genres, onRemoveFavorite }) => {
   const [trailerUrl, setTrailerUrl] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];

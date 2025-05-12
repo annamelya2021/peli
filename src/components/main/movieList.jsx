@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  fetchPopularMovies,
-  fetchGenreMovie,
-  searchMovies,
-} from "../../services/api";
+import PropTypes from "prop-types";
+import { fetchPopularMovies, fetchGenreMovie } from "../../services/api";
 import MovieCard from "./movieCard";
 import "./movieList.css";
 
@@ -12,26 +9,30 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [page, setPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
 
-  // Завантаження фільмів при скролі (тільки для популярних)
+  // Додаємо scroll listener
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const fullHeight = document.body.offsetHeight;
-
-      if (scrollTop + windowHeight >= fullHeight - 100) {
+      if (
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 200 &&
+        !isFetching &&
+        !isSearching &&
+        !selectGenres
+      ) {
         setPage((prevPage) => prevPage + 1);
       }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isFetching, isSearching, selectGenres]);
 
-  // Завантаження наступної сторінки популярних фільмів
+  // Завантаження нової сторінки популярних фільмів
   useEffect(() => {
     const loadMoreMovies = async () => {
+      setIsFetching(true);
       try {
         const data = await fetchPopularMovies(page);
         setMovies((prevMovies) => {
@@ -41,6 +42,8 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
         });
       } catch (error) {
         console.error("Scroll fetch failed", error);
+      } finally {
+        setIsFetching(false);
       }
     };
 
@@ -49,14 +52,13 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
     }
   }, [page, isSearching, selectGenres]);
 
-  // Початкове завантаження або при зміні пошуку/жанру
+  // Початкове завантаження/оновлення при фільтрах
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      setPage(1); // Скидаємо сторінку
-
+      setPage(1);
       try {
-        if (searchResults && searchResults.length > 0) {
+        if (searchResults?.length > 0) {
           setMovies(searchResults);
           setIsSearching(true);
         } else if (selectGenres) {
@@ -64,7 +66,7 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
           setMovies(movieData);
           setIsSearching(false);
         } else {
-          const movieData = await fetchPopularMovies(1); // перша сторінка
+          const movieData = await fetchPopularMovies(1);
           setMovies(movieData);
           setIsSearching(false);
         }
@@ -78,18 +80,24 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
     fetchData();
   }, [searchResults, selectGenres]);
 
-  if (loading && movies.length === 0) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="movies-container">
       {movies.map((movie) => (
         <MovieCard key={movie.id} movie={movie} genres={genres} />
       ))}
-      {loading && <div>Loading more...</div>}
+      {(loading || isFetching) && <div>Loading more...</div>}
     </div>
   );
+};
+
+MovieList.propTypes = {
+  selectGenres: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.array,
+  ]),
+  searchResults: PropTypes.array,
+  genres: PropTypes.array,
 };
 
 export default MovieList;
