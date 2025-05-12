@@ -1,14 +1,12 @@
+import React from "react";
+import MovieList from "./movieList";
+import App from "./App.jsx";
+import "./main.css";
 
-import React from 'react';
-import MovieList from './movieList';
-import './main.css';
-
-const Main = () => {
+export const Main = () => {
   return (
     <main className="main-content">
       <MovieList />
     </main>
   );
-}
-
-export default Main;
+};

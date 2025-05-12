@@ -1,15 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { fetchGenres , searchMovies} from '../../services/api.js';
-import {getGenresIcons } from './navbar.js';
-import './navbar.css';
+import { useEffect, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { searchMovies } from "../../services/api";
+import PropTypes from "prop-types";
+import "./navbar.css";
 
+const iconGenres = [
+  "fas fa-fist-raised",
+  "fas fa-hiking",
+  "fas fa-film",
+  "fas fa-laugh",
+  "fas fa-bomb",
+  "fas fa-book",
+  "fas fa-theater-masks",
+  "fas fa-users",
+  "fas fa-dragon",
+  "fas fa-landmark",
+  "fas fa-ghost",
+  "fas fa-music",
+  "fas fa-search",
+  "fas fa-heart",
+  "fas fa-rocket",
+  "fas fa-tv",
+  "fas fa-user-secret",
+  "fas fa-bomb",
+  "fas fa-hat-cowboy",
+];
 
-const Navbar = ({ setSelectGenres ,setSearchResults, showFavorites , setShowFavorites, genres}) => {
-  const [searchQuery, setSearchQuery] = useState('');
+function getGenresIcons(genres) {
+  return genres.map((genre, index) => ({
+    id: genre.id,
+    name: genre.name,
+    className: iconGenres[index] || "fas fa-film",
+  }));
+}
+
+const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isHome, setIsHome] = useState(true);
+
+  const location = useLocation();
+  const { isLoggedIn, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   const handleSearchChange = async (e) => {
     const query = e.target.value;
@@ -18,19 +56,13 @@ const Navbar = ({ setSelectGenres ,setSearchResults, showFavorites , setShowFavo
       try {
         const results = await searchMovies(query);
         setSearchResults(results);
+        setSelectGenres(null); // Очистити вибраний жанр при пошуку
       } catch (error) {
-        console.error('Error searching movies:', error);
+        console.error("Error searching movies:", error);
       }
-      
-    } 
-    else {
+    } else {
       setSearchResults([]);
-      setIsHome(true); 
     }
-  };
-
-  const handleLoginToggle = () => {
-    setIsLoggedIn(!isLoggedIn); 
   };
 
   const handleResize = () => {
@@ -38,60 +70,78 @@ const Navbar = ({ setSelectGenres ,setSearchResults, showFavorites , setShowFavo
   };
 
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     handleResize();
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   const handleGenreClick = (genreId) => {
     setSelectGenres(genreId);
-  };
-  const handleFavoritesClick = () => {
-    setIsHome(false); 
-    setShowFavorites(true);
+    setSearchQuery(""); // Очистити пошук при виборі жанру
+    setSearchResults([]);
   };
 
-  const handleHomeClick = () => {
-    setIsHome(true); 
-    setShowFavorites(false);
-  
-  };
   const genresIcons = getGenresIcons(genres);
+  const isHomePage = location.pathname === "/";
+
   return (
     <nav className="navbar">
-      <div className="navbar-title">QUENTIN FILM</div>
-      <div className={`navbar-links ${isMobile ? 'mobile' : ''} ${menuOpen ? 'open' : ''}`}>
-          {isHome && (
-        <div className="navbar-dropdown">
-          <button className="navbar-button">Categorías</button>
-          <div className="dropdown-content">
-            {genresIcons.map((genre) => (
-              <button
-                key={genre.id}
-                className="dropdown-item"
-                onClick={() => handleGenreClick(genre.id)}
-              >
-                <i className={genre.className}></i> {genre.name}
-              </button>
-            ))}
+      <div
+        className={`navbar-links ${isMobile ? "mobile" : ""} ${
+          menuOpen ? "open" : ""
+        }`}
+      >
+        {isHomePage && (
+          <div className="navbar-dropdown">
+            <button className="navbar-button">Categorías</button>
+            <div className="dropdown-content">
+              {genresIcons.map((genre) => (
+                <button
+                  key={genre.id}
+                  className="dropdown-item"
+                  onClick={() => handleGenreClick(genre.id)}
+                >
+                  <i className={genre.className}></i> {genre.name}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-  )}
-        {isHome ? ( 
-          <button className="navbar-button" onClick={handleFavoritesClick}>
+        )}
+
+        {isLoggedIn && (
+          <NavLink
+            to="/favorites"
+            className={({ isActive }) =>
+              `navbar-button ${isActive ? "active" : ""}`
+            }
+          >
             Favoritos
+          </NavLink>
+        )}
+        {!isHomePage && (
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `navbar-button ${isActive ? "active" : ""}`
+            }
+          >
+            Inicio
+          </NavLink>
+        )}
+
+        {isLoggedIn ? (
+          <button className="navbar-button login" onClick={handleLogout}>
+            Logout
           </button>
         ) : (
-          <button className="navbar-button" onClick={handleHomeClick}>
-            Inicio
-          </button>
+          <NavLink to="/login" className="navbar-button login">
+            Login
+          </NavLink>
         )}
-        <button className="navbar-button login" onClick={handleLoginToggle}>
-          {isLoggedIn ? 'Logout' : 'Login'}
-        </button>
-        {isHome && ( 
+
+        {isHomePage && (
           <div className="navbar-search">
             <input
               type="text"
@@ -103,11 +153,25 @@ const Navbar = ({ setSelectGenres ,setSearchResults, showFavorites , setShowFavo
           </div>
         )}
       </div>
-      <button className="navbar-menu-button" onClick={() => setMenuOpen(!menuOpen)}>
+      <button
+        className="navbar-menu-button"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
         &#9776;
       </button>
     </nav>
   );
+};
+
+Navbar.propTypes = {
+  setSelectGenres: PropTypes.func.isRequired,
+  setSearchResults: PropTypes.func.isRequired,
+  genres: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default Navbar;

@@ -1,106 +1,93 @@
-import React, { useEffect, useState } from 'react';
-import { fetchPopularMovies, fetchGenreMovie, searchMovies } from '../../services/api';
-import MovieCard from './movieCard';
-import './movieList.css';
+import { useEffect, useState } from "react";
+import {
+  fetchPopularMovies,
+  fetchGenreMovie,
+  searchMovies,
+} from "../../services/api";
+import MovieCard from "./movieCard";
+import "./movieList.css";
 
 const MovieList = ({ selectGenres, searchResults, genres }) => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState(1);
 
-  const fetchPopular = async () => {
-    setLoading(true);
-    try {
-      const movieData = await fetchPopularMovies();
-      setMovies(movieData);
-      setIsSearching(false); 
-    } catch (error) {
-      console.error('Error fetching popular movies:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-//prueba de scroll(scroll infinito)
+  // Завантаження фільмів при скролі (тільки для популярних)
   useEffect(() => {
-    const handleScroll = async() => {
-      if (window.innerHeight + window.scrollY >= document.body.scrollHeight-1) {
-        setPage(page => page + 1);
-        const data = await fetchPopularMovies(page)
-        setMovies((movieData) => {
-          const existingMovieIds = new Set(movieData.map(movie => movie.id));
-          const newMovies = data.filter(movie => !existingMovieIds.has(movie.id));
-          return [...movieData, ...newMovies];
-        });
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.body.offsetHeight;
 
+      if (scrollTop + windowHeight >= fullHeight - 100) {
+        setPage((prevPage) => prevPage + 1);
       }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [page]);
 
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Завантаження наступної сторінки популярних фільмів
+  useEffect(() => {
+    const loadMoreMovies = async () => {
+      try {
+        const data = await fetchPopularMovies(page);
+        setMovies((prevMovies) => {
+          const existingIds = new Set(prevMovies.map((m) => m.id));
+          const newOnes = data.filter((m) => !existingIds.has(m.id));
+          return [...prevMovies, ...newOnes];
+        });
+      } catch (error) {
+        console.error("Scroll fetch failed", error);
+      }
+    };
+
+    if (!isSearching && !selectGenres && page > 1) {
+      loadMoreMovies();
+    }
+  }, [page, isSearching, selectGenres]);
+
+  // Початкове завантаження або при зміні пошуку/жанру
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setPage(1); // Скидаємо сторінку
+
       try {
-        if (selectGenres) {
+        if (searchResults && searchResults.length > 0) {
+          setMovies(searchResults);
+          setIsSearching(true);
+        } else if (selectGenres) {
           const movieData = await fetchGenreMovie(selectGenres);
           setMovies(movieData);
+          setIsSearching(false);
         } else {
-          await fetchPopular();
+          const movieData = await fetchPopularMovies(1); // перша сторінка
+          setMovies(movieData);
+          setIsSearching(false);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [selectGenres]);
+  }, [searchResults, selectGenres]);
 
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      if (searchResults && searchResults.length > 0) {
-        setMovies(searchResults);
-        setIsSearching(true); 
-      } 
-      else if (searchResults===0) {
-        return (
-         
-          <div>
-            <h2>No movies found</h2>
-            <img src="/quentin.jpeg" alt="No movies found" />
-          </div>
-        );
-      }
-      else {
-        await fetchPopular(); 
-      }
-    };
-
-    fetchSearchResults();
-  }, [searchResults]);
-
-  if (loading) {
+  if (loading && movies.length === 0) {
     return <div>Loading...</div>;
   }
-
-  // if (movies.length === 0 && isSearching) {
-  //   return (
-  //     <div>
-  //       <img src="../../../public/quentin.jpeg" alt="No movies found" />
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="movies-container">
       {movies.map((movie) => (
         <MovieCard key={movie.id} movie={movie} genres={genres} />
       ))}
+      {loading && <div>Loading more...</div>}
     </div>
   );
 };
