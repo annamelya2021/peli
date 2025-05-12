@@ -1,56 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from './components/navbar/navbar.jsx';
-import MovieList from './components/main/movieList.jsx';
-import Footer from './components/footer/footer';  
-import FavoritesList from './components/main/favoritesList.jsx';
-import './App.css';
-import { fetchGenres } from './services/api'; 
-
+// App.js
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import LoginPage from "./components/auth/LoginPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Navbar from "./components/navbar/Navbar";
+import MovieList from "./components/main/movieList";
+import FavoritesList from "./components/main/favoritesList";
+import Footer from "./components/footer/footer";
+import "./App.css";
+import { useEffect, useState } from "react";
+import { fetchGenres } from "./services/api";
 
 function App() {
-  const [selectGenres, setSelectGenres] = useState(null);
-  const [searchResults, setSearchResults] = useState("");
-  const [showFavorites, setShowFavorites] = useState(false);
-  const [genresData, setGenresData] = useState([]);
+  const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
 
-  const handleShowFavorites = () => {
-    setShowFavorites(true); 
-  };
-
-  const fetchGenresData = async() => { 
-    try {
-      const genreData = await fetchGenres();
-      setGenresData(genreData);
-    } catch (error) {
-      console.error('Error fetching genres:', error);
-    }
+  const handleSelectGenres = (genreId) => {
+    setSelectedGenre(genreId);
   };
 
   useEffect(() => {
-    fetchGenresData(); 
-  }, []); 
-
+    const getGenres = async () => {
+      try {
+        const data = await fetchGenres();
+        setGenres(data);
+      } catch (err) {
+        console.error("Failed to fetch genres", err);
+      }
+    };
+    getGenres();
+  }, []);
   return (
-    <div className="App">
-      <Navbar 
-        setSelectGenres={setSelectGenres}
-        showFavorites={handleShowFavorites} 
-        setSearchResults={setSearchResults} 
-        setShowFavorites={setShowFavorites}
-        genres={genresData}
-      />
-      {showFavorites ? (
-        <FavoritesList genres={genresData} />
-      ) : (
-        <MovieList 
-          selectGenres={selectGenres} 
-          genres={genresData} 
-          searchResults={searchResults} 
-        />
-      )}
-      <Footer />
-    </div>
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <Navbar
+            setSelectGenres={handleSelectGenres}
+            setSearchResults={setSearchResults}
+            genres={genres}
+          />
+
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <MovieList
+                  selectGenres={selectedGenre}
+                  searchResults={searchResults}
+                  genres={genres}
+                />
+              }
+            />
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/favorites"
+              element={
+                <ProtectedRoute>
+                  <FavoritesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
-
 export default App;
