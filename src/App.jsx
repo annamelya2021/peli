@@ -8,13 +8,16 @@ import {
 import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./components/auth/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import Navbar from "./components/navbar/Navbar";
+
 import MovieList from "./components/main/movieList";
 import FavoritesList from "./components/main/favoritesList";
 import Footer from "./components/footer/footer";
 import "./App.css";
 import { useEffect, useState } from "react";
 import { fetchGenres } from "./services/api";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Navbar } from "./components/navbar/navbar.jsx";
 
 function App() {
   const [genres, setGenres] = useState([]);
@@ -45,7 +48,7 @@ function App() {
             setSearchResults={setSearchResults}
             genres={genres}
           />
-
+          <ToastContainer position="top-center" autoClose={3000} />
           <Routes>
             <Route
               path="/"

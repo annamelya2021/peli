@@ -35,7 +35,7 @@ function getGenresIcons(genres) {
   }));
 }
 
-const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
+export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -173,5 +173,3 @@ Navbar.propTypes = {
     })
   ).isRequired,
 };
-
-export default Navbar;

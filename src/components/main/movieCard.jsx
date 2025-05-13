@@ -2,15 +2,14 @@ import { useState, useEffect } from "react";
 import Modal from "./modal";
 import ActionButton from "./actionButton";
 import { fetchMovieVideos } from "../../services/api";
+import { toast } from "react-toastify";
+import PropTypes from "prop-types";
 import "./movieCard.css";
-import ToastNotification from "./ToastNotification";
-import { PropTypes } from "prop-types";
 
 const MovieCard = ({ movie, genres, onRemoveFavorite }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [trailerUrl, setTrailerUrl] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
@@ -29,8 +28,7 @@ const MovieCard = ({ movie, genres, onRemoveFavorite }) => {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
-      setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 3000);
+      toast.error("Debes iniciar sesión para manejar tus favoritos");
       return;
     }
 
@@ -43,10 +41,12 @@ const MovieCard = ({ movie, genres, onRemoveFavorite }) => {
       localStorage.setItem("favorites", JSON.stringify(favorites));
       setIsFavorite(false);
       if (onRemoveFavorite) onRemoveFavorite(movie.id);
+      toast.info("Eliminado de favoritos");
     } else {
       favorites.push(movie);
       localStorage.setItem("favorites", JSON.stringify(favorites));
       setIsFavorite(true);
+      toast.success("Añadido a favoritos");
     }
   };
 
@@ -110,11 +110,6 @@ const MovieCard = ({ movie, genres, onRemoveFavorite }) => {
           )}
         </Modal>
       </div>
-
-      <ToastNotification
-        message="Debes iniciar sesión para manejar tus favoritos"
-        visible={showNotification}
-      />
     </>
   );
 };
