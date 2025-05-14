@@ -1,0 +1,14 @@
+.center {
+  transform: scale(1.3);
+  z-index: 3;
+}
+.adjacent {
+  transform: scale(1.1);
+  opacity: 0.85;
+  z-index: 2;
+}
+.far {
+  transform: scale(0.9);
+  opacity: 0.6;
+  z-index: 1;
+}

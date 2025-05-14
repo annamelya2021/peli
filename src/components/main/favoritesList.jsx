@@ -47,7 +47,7 @@ const FavoritesList = ({ genres }) => {
 };
 
 FavoritesList.propTypes = {
-  genres: PropTypes.array.isRequired,
+  genres: PropTypes.array,
 };
 
 export default FavoritesList;

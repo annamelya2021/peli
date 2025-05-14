@@ -224,3 +224,47 @@ body {
     overflow-y: auto; /* Añade scroll si el contenido excede la altura máxima */
   }
 }
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--secundary-color);
+  padding: 1rem;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar-links-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.navbar-links-right {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.navbar-links-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.navbar-links-right {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+.navbar-button.login {
+  margin-right: 40px; /* Це вже не потрібно */
+}
+.navbar-button.login {
+  margin-left: auto;
+}

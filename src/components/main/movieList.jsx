@@ -14,6 +14,7 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
   // Додаємо scroll listener
   useEffect(() => {
     const handleScroll = () => {
+      console.log("scrolling..."); // перевіряємо
       if (
         window.innerHeight + window.scrollY >=
           document.body.offsetHeight - 200 &&

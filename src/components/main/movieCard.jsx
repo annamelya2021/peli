@@ -66,7 +66,7 @@ const MovieCard = ({ movie, genres, onRemoveFavorite }) => {
   const defaultImage = "https://i.gifer.com/yH.gif";
 
   return (
-    <>
+    <div className="movie-card-wrapper">
       <div className="movie-card">
         <img
           src={
@@ -80,22 +80,24 @@ const MovieCard = ({ movie, genres, onRemoveFavorite }) => {
         <p>{genreNames}</p>
 
         <ActionButton
-          label="Mas info"
+          label="Más info"
           onClick={toggleModal}
           className="info-button"
         />
 
         <ActionButton
-          label={isFavorite ? "Eliminar de favoritos" : "Añadir a favoritos"}
+          label={isFavorite ? "🗑️ de favoritos  " : "Añadir a favoritos"}
           onClick={handleFavorite}
           className="favorite-button"
         />
+      </div>
 
+      {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={toggleModal}>
           <h2>{movie.title}</h2>
           <p>{movie.overview}</p>
-          <p>Рік: {movie.release_date.slice(0, 4)}</p>
-          <p>Рейтинг: {movie.vote_average.toFixed(1)}</p>
+          <p>Año: {movie.release_date.slice(0, 4)}</p>
+          <p>Rating: {movie.vote_average.toFixed(1)}</p>
           <p>{genreNames}</p>
           {trailerUrl && (
             <iframe
@@ -109,8 +111,8 @@ const MovieCard = ({ movie, genres, onRemoveFavorite }) => {
             ></iframe>
           )}
         </Modal>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 

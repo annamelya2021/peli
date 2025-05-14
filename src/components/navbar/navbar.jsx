@@ -89,7 +89,7 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
   return (
     <nav className="navbar">
       <div
-        className={`navbar-links ${isMobile ? "mobile" : ""} ${
+        className={`navbar-links-left ${isMobile ? "mobile" : ""} ${
           menuOpen ? "open" : ""
         }`}
       >
@@ -110,16 +110,6 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
           </div>
         )}
 
-        {isLoggedIn && (
-          <NavLink
-            to="/favorites"
-            className={({ isActive }) =>
-              `navbar-button ${isActive ? "active" : ""}`
-            }
-          >
-            Favoritos
-          </NavLink>
-        )}
         {!isHomePage && (
           <NavLink
             to="/"
@@ -131,13 +121,14 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
           </NavLink>
         )}
 
-        {isLoggedIn ? (
-          <button className="navbar-button login" onClick={handleLogout}>
-            Logout
-          </button>
-        ) : (
-          <NavLink to="/login" className="navbar-button login">
-            Login
+        {isLoggedIn && (
+          <NavLink
+            to="/favorites"
+            className={({ isActive }) =>
+              `navbar-button ${isActive ? "active" : ""}`
+            }
+          >
+            ⭐Favoritos
           </NavLink>
         )}
 
@@ -153,6 +144,19 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
           </div>
         )}
       </div>
+
+      <div className="navbar-links-right">
+        {isLoggedIn ? (
+          <button className="navbar-button login" onClick={handleLogout}>
+            Logout
+          </button>
+        ) : (
+          <NavLink to="/login" className="navbar-button login">
+            Login
+          </NavLink>
+        )}
+      </div>
+
       <button
         className="navbar-menu-button"
         onClick={() => setMenuOpen(!menuOpen)}
