@@ -11,26 +11,32 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
   const [page, setPage] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
 
-  // Додаємо scroll listener
+  // Handle scroll with throttling
   useEffect(() => {
+    let timer;
     const handleScroll = () => {
-      console.log("scrolling..."); // перевіряємо
-      if (
-        window.innerHeight + window.scrollY >=
-          document.body.offsetHeight - 200 &&
-        !isFetching &&
-        !isSearching &&
-        !selectGenres
-      ) {
-        setPage((prevPage) => prevPage + 1);
-      }
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (
+          window.innerHeight + window.scrollY >=
+            document.body.offsetHeight - 500 && // Increased threshold for mobile
+          !isFetching &&
+          !isSearching &&
+          !selectGenres
+        ) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      }, 200);
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (timer) clearTimeout(timer);
+    };
   }, [isFetching, isSearching, selectGenres]);
 
-  // Завантаження нової сторінки популярних фільмів
+  // Load more movies
   useEffect(() => {
     const loadMoreMovies = async () => {
       setIsFetching(true);
@@ -53,7 +59,7 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
     }
   }, [page, isSearching, selectGenres]);
 
-  // Початкове завантаження/оновлення при фільтрах
+  // Initial load/filter changes
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -86,7 +92,9 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
       {movies.map((movie) => (
         <MovieCard key={movie.id} movie={movie} genres={genres} />
       ))}
-      {(loading || isFetching) && <div>Loading more...</div>}
+      {(loading || isFetching) && (
+        <div className="loading-indicator">Loading more movies...</div>
+      )}
     </div>
   );
 };

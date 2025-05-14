@@ -1,11 +1,26 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { PropTypes } from "prop-types";
-import "./simpleSlider.css"; // тут зберігаємо стилі для ефекту пірамідки
+import "./simpleSlider.css";
 
 function SimpleSlider({ movies }) {
-  const visibleCount = 5;
+  const [visibleCount, setVisibleCount] = useState(getVisibleCount());
   const [startIndex, setStartIndex] = useState(0);
   const sliderRef = useRef(null);
+
+  function getVisibleCount() {
+    if (window.innerWidth <= 767) return 3;
+    if (window.innerWidth <= 1024) return 4;
+    return 5;
+  }
+
+  const handleResize = useCallback(() => {
+    setVisibleCount(getVisibleCount());
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
 
   const nextSlide = useCallback(() => {
     setStartIndex((prev) =>
@@ -30,34 +45,49 @@ function SimpleSlider({ movies }) {
 
   const visibleMovies = movies.slice(startIndex, startIndex + visibleCount);
 
+  const getCardClassName = (index) => {
+    const centerIndex = Math.floor(visibleCount / 2);
+    const distance = Math.abs(index - centerIndex);
+
+    if (distance === 0) return "center";
+    if (distance === 1) return "adjacent";
+    return "far";
+  };
+
   return (
-    <div style={styles.wrapper}>
+    <div
+      style={{
+        ...styles.wrapper,
+        padding: window.innerWidth <= 767 ? "10px" : "20px",
+      }}
+    >
       <button onClick={prevSlide} style={styles.button}>
         ←
       </button>
-      <div style={styles.slider} ref={sliderRef}>
-        {visibleMovies.map((movie, index) => {
-          const centerIndex = Math.floor(visibleCount / 2);
-          let className = "";
-
-          if (index === centerIndex) {
-            className = "center";
-          } else if (Math.abs(index - centerIndex) === 1) {
-            className = "adjacent";
-          } else {
-            className = "far";
-          }
-
-          return (
-            <div key={movie.id} style={styles.card} className={className}>
-              <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={movie.title}
-                style={styles.image}
-              />
-            </div>
-          );
-        })}
+      <div
+        style={{
+          ...styles.slider,
+          gap: window.innerWidth <= 767 ? "5px" : "10px",
+        }}
+        ref={sliderRef}
+      >
+        {visibleMovies.map((movie, index) => (
+          <div
+            key={movie.id}
+            style={{
+              ...styles.card,
+              width: window.innerWidth <= 767 ? "120px" : "180px",
+              minWidth: window.innerWidth <= 767 ? "120px" : "180px",
+            }}
+            className={getCardClassName(index)}
+          >
+            <img
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+              style={styles.image}
+            />
+          </div>
+        ))}
       </div>
       <button onClick={nextSlide} style={styles.button}>
         →
@@ -91,6 +121,7 @@ const styles = {
   image: {
     width: "100%",
     borderRadius: "10px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
   },
   title: {
     fontSize: "0.9rem",
@@ -103,6 +134,7 @@ const styles = {
     color: "black",
     border: "none",
     cursor: "pointer",
+    padding: "0 10px",
   },
 };
 

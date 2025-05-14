@@ -24,7 +24,7 @@ const FavoritesList = ({ genres }) => {
           No se ha encontrado nada en su favorito{" "}
         </h2>
         <img
-          src="/694e3d940cd7.jpeg"
+          src="/peli/694e3d940cd7.jpeg"
           alt="No favorites found"
           className="no-favorites-image"
         />

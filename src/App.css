@@ -7,25 +7,5 @@ html {
   display: flex;
   flex-direction: column;
   background: #282c34;
-}
-
-.navbar {
-  /* background-color: #282c34; */
-  padding: 20px;
-  color: white;
-  text-align: center;
-}
-
-.main-content {
-  flex: 1;
-  padding: 20px;
-}
-
-.slider-container {
-  margin-top: 15px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  align-content: center;
+  overflow-x: hidden;
 }

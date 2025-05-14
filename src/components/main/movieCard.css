@@ -52,6 +52,9 @@
   font-size: 14px;
   margin: 0 10px 10px;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .notification {
