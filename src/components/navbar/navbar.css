@@ -226,3 +226,28 @@ body {
     transform: translateX(0);
   }
 }
+
+.dark-theme {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-theme .movie-card {
+  background: linear-gradient(to bottom, #1a1a1a, #333333);
+}
+
+.dark-theme .navbar {
+  background: linear-gradient(to bottom, #333333, #1a1a1a);
+}
+
+.dark-theme .navbar-button {
+  background-color: #444;
+  color: #fff;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 15px;
+}

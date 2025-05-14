@@ -39,10 +39,24 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("darkMode");
+    return savedTheme ? JSON.parse(savedTheme) : false;
+  });
 
   const location = useLocation();
   const { isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
+
+    if (isDarkMode) {
+      document.body.classList.add("dark-theme");
+    } else {
+      document.body.classList.remove("dark-theme");
+    }
+  }, [isDarkMode]);
 
   const handleLogout = () => {
     logout();
@@ -146,6 +160,12 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
       </div>
 
       <div className="navbar-links-right">
+        <button
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          className="theme-toggle"
+        >
+          {isDarkMode ? "☀️" : "🌙"}
+        </button>
         {isLoggedIn ? (
           <button className="navbar-button login" onClick={handleLogout}>
             Logout
