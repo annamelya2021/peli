@@ -1,112 +1,67 @@
-import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { fetchPopularMovies, fetchGenreMovie } from "../../services/api";
-import MovieCard from "./movieCard";
-import "./movieList.css";
+import axios from "axios";
+import { APIKEY } from "./apiKey";
 
-const MovieList = ({ selectGenres, searchResults, genres }) => {
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [isSearching, setIsSearching] = useState(false);
-  const [page, setPage] = useState(1);
-  const [isFetching, setIsFetching] = useState(false);
+export async function fetchPopularMovies(page = 1, genreId = null) {
+  let url = `https://api.themoviedb.org/3/discover/movie?api_key=${APIKEY}&sort_by=popularity.desc&page=${page}&language=es-ES`;
+  if (genreId) {
+    url += `&with_genres=${genreId}`;
+  }
+  try {
+    const response = await axios.get(url);
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching popular movies:", error);
+    throw error;
+  }
+}
+export async function fetchGenres() {
+  const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${APIKEY}&language=es-ES`;
+  try {
+    const response = await axios.get(url);
+    return response.data.genres;
+  } catch (error) {
+    console.error("Error fetching genres:", error);
+    throw error;
+  }
+}
 
-  // Handle scroll with throttling
-  useEffect(() => {
-    let timer;
-    const handleScroll = () => {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        if (
-          window.innerHeight + window.scrollY >=
-            document.body.offsetHeight - 500 && // Increased threshold for mobile
-          !isFetching &&
-          !isSearching &&
-          !selectGenres
-        ) {
-          setPage((prevPage) => prevPage + 1);
-        }
-      }, 200);
-    };
+export async function searchMovies(query) {
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${APIKEY}&query=${query}&language=es-ES`;
+  try {
+    const response = await axios.get(url);
+    return response.data.results;
+  } catch (error) {
+    console.error("Error searching movies:", error);
+    throw error;
+  }
+}
 
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (timer) clearTimeout(timer);
-    };
-  }, [isFetching, isSearching, selectGenres]);
+export async function fetchMovieVideos(movieId) {
+  const url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${APIKEY}&language=es-ES`;
+  try {
+    const response = await axios.get(url);
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching movie videos:", error);
+    throw error;
+  }
+}
 
-  // Load more movies
-  useEffect(() => {
-    const loadMoreMovies = async () => {
-      setIsFetching(true);
-      try {
-        const data = await fetchPopularMovies(page);
-        setMovies((prevMovies) => {
-          const existingIds = new Set(prevMovies.map((m) => m.id));
-          const newOnes = data.filter((m) => !existingIds.has(m.id));
-          return [...prevMovies, ...newOnes];
-        });
-      } catch (error) {
-        console.error("Scroll fetch failed", error);
-      } finally {
-        setIsFetching(false);
-      }
-    };
+export async function fetchGenreMovie(genreId) {
+  const url = `https://api.themoviedb.org/3/discover/movie?with_genres=${genreId}&api_key=${APIKEY}&language=es-ES`;
+  try {
+    const response = await axios.get(url);
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching movie videos:", error);
+    throw error;
+  }
+}
 
-    if (!isSearching && !selectGenres && page > 1) {
-      loadMoreMovies();
-    }
-  }, [page, isSearching, selectGenres]);
-
-  // Initial load/filter changes
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setPage(1);
-      try {
-        if (searchResults?.length > 0) {
-          setMovies(searchResults);
-          setIsSearching(true);
-        } else if (selectGenres) {
-          const movieData = await fetchGenreMovie(selectGenres);
-          setMovies(movieData);
-          setIsSearching(false);
-        } else {
-          const movieData = await fetchPopularMovies(1);
-          setMovies(movieData);
-          setIsSearching(false);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [searchResults, selectGenres]);
-
-  return (
-    <div className="movies-container">
-      {movies.map((movie) => (
-        <MovieCard key={movie.id} movie={movie} genres={genres} />
-      ))}
-      {(loading || isFetching) && (
-        <div className="loading-indicator">Loading more movies...</div>
-      )}
-    </div>
-  );
+export default {
+  fetchPopularMovies,
+  fetchGenres,
+  searchMovies,
+  fetchMovieVideos,
+  fetchGenreMovie,
 };
-
-MovieList.propTypes = {
-  selectGenres: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-    PropTypes.array,
-  ]),
-  searchResults: PropTypes.array,
-  genres: PropTypes.array,
-};
-
-export default MovieList;

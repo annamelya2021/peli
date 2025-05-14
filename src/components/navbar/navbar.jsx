@@ -3,6 +3,9 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { searchMovies } from "../../services/api";
 import PropTypes from "prop-types";
+import { BsMoonStars } from "react-icons/bs";
+import { RxSun } from "react-icons/rx";
+
 import "./navbar.css";
 
 const iconGenres = [
@@ -109,6 +112,11 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
       >
         {isHomePage && (
           <div className="navbar-dropdown">
+            <img
+              className="logo"
+              src="https://cdn-icons-png.flaticon.com/128/686/686458.png"
+              alt="logo"
+            />
             <button className="navbar-button">Categorías</button>
             <div className="dropdown-content">
               {genresIcons.map((genre) => (
@@ -164,7 +172,7 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
           onClick={() => setIsDarkMode(!isDarkMode)}
           className="theme-toggle"
         >
-          {isDarkMode ? "☀️" : "🌙"}
+          {isDarkMode ? <BsMoonStars style={{ color: "yellow" }} /> : <RxSun />}
         </button>
         {isLoggedIn ? (
           <button className="navbar-button login" onClick={handleLogout}>

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { PropTypes } from "prop-types";
 import "./simpleSlider.css";
+import { FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 
 function SimpleSlider({ movies }) {
   const [visibleCount, setVisibleCount] = useState(getVisibleCount());
@@ -62,7 +64,7 @@ function SimpleSlider({ movies }) {
       }}
     >
       <button onClick={prevSlide} style={styles.button}>
-        ←
+        <FaArrowLeft style={{ width: "20px", height: "20px" }} />
       </button>
       <div
         style={{
@@ -90,7 +92,7 @@ function SimpleSlider({ movies }) {
         ))}
       </div>
       <button onClick={nextSlide} style={styles.button}>
-        →
+        <FaArrowRight style={{ width: "20px", height: "20px" }} />
       </button>
     </div>
   );

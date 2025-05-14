@@ -1,14 +1,10 @@
-import React from "react";
 import "./footer.css";
-import imageAna from "../../assets/88847909.jpg";
 
 const Footer = () => {
-  const year = new Date().getFullYear();
   const creators = [
     {
       id: 1,
-      name: "Anna",
-      avatar: imageAna,
+      name: "Anna Melnychenko",
       url: "https://github.com/annamelya2021",
     },
   ];
@@ -20,9 +16,8 @@ const Footer = () => {
   return (
     <footer className="footer">
       <button className="scroll-to-top" onClick={scrollToTop}>
-        ↑
+        <i className="fas fa-arrow-up"></i>
       </button>
-      {/* <div className="copyright">&copy; {year} Guardians of React </div> */}
       <div className="creators">
         {creators.map((creator) => (
           <a
@@ -33,11 +28,6 @@ const Footer = () => {
             className="creator-link"
           >
             <div className="creator">
-              <img
-                src={creator.avatar}
-                alt={creator.name}
-                className="creator-avatar"
-              />
               <span className="creator-name">{creator.name}</span>
             </div>
           </a>
