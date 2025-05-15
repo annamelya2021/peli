@@ -1,0 +1,84 @@
+/* busquedaList.css */
+.movie-card {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin: 10px auto;
+  background: linear-gradient(to bottom, #282c34, #f8d50c);
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: scale(1.03);
+}
+
+.movies-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 84px;
+  gap: 15px;
+  padding: 0 10px;
+}
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .movies-container {
+    gap: 12px;
+  }
+
+  .movie-card {
+    width: 220px;
+    margin: 8px;
+  }
+}
+
+/* Mobile (up to 767px) */
+@media (max-width: 767px) {
+  .movie-card {
+    width: 300px;
+    margin: 8px;
+  }
+}
+
+/* Додати в кінець файлу */
+.loading-spinner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #d6ba13; /* Колір як у вашому дизайні */
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Для темної теми */
+.dark-theme .spinner {
+  border-top-color: #f8d50c;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.no-results {
+  width: 100%;
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.dark-theme .no-results {
+  color: #aaa;
+}

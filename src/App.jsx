@@ -9,8 +9,6 @@ import {
 import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./components/auth/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-
-import MovieList from "./components/main/movieList";
 import FavoritesList from "./components/main/favoritesList";
 import Footer from "./components/footer/footer";
 import "./App.css";
@@ -20,6 +18,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Navbar } from "./components/navbar/navbar.jsx";
 import SimpleSlider from "./components/main/simpleSlider";
+import PopularList from "./components/main/popularList.jsx";
+import BusquedaList from "./components/main/busquedaList.jsx";
 
 function AppContent() {
   const location = useLocation();
@@ -66,15 +66,26 @@ function AppContent() {
 
       <Routes>
         <Route
-          path="/"
+          path="/busqueda"
           element={
-            <MovieList
+            <BusquedaList
               selectGenres={selectedGenre}
               searchResults={searchResults}
               genres={genres}
             />
           }
         />
+        <Route
+          path="/"
+          element={
+            <PopularList
+              selectGenres={selectedGenre}
+              searchResults={searchResults}
+              genres={genres}
+            />
+          }
+        />
+
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/favorites"

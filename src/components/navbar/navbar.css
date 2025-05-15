@@ -258,3 +258,22 @@ body {
 
   margin-right: 20px;
 }
+
+/* Додати в navbar.css */
+.search-loader {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #d6ba13;
+  animation: spin 1s linear infinite;
+}
+
+.dark-theme .search-loader {
+  border-top-color: #f8d50c;
+  border-color: rgba(255, 255, 255, 0.1);
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { searchMovies } from "../../services/api";
@@ -42,6 +42,8 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isFavoritePage, setIsFavoritePage] = useState(false);
+  const [isBusquedaPage, setIsBusquedaPage] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("darkMode");
     return savedTheme ? JSON.parse(savedTheme) : false;
@@ -50,6 +52,24 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
   const location = useLocation();
   const { isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
+
+  // Реф для інпуту пошуку
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    setIsBusquedaPage(location.pathname === "/busqueda");
+  }, [location.pathname]);
+
+  useEffect(() => {
+    setIsFavoritePage(location.pathname === "/favorites");
+  }, [location.pathname]);
+
+  // Автоматичний фокус на інпуті при переході на /busqueda
+  useEffect(() => {
+    if (isBusquedaPage && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isBusquedaPage]);
 
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
@@ -139,7 +159,7 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
               `navbar-button ${isActive ? "active" : ""}`
             }
           >
-            Inicio
+            Populares
           </NavLink>
         )}
 
@@ -154,14 +174,26 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
           </NavLink>
         )}
 
-        {isHomePage && (
+        {!isBusquedaPage && isLoggedIn && (
+          <NavLink
+            to="/busqueda"
+            className={({ isActive }) =>
+              `navbar-button ${isActive ? "active" : ""}`
+            }
+          >
+            Busqeda
+          </NavLink>
+        )}
+
+        {!isHomePage && !isFavoritePage && (
           <div className="navbar-search">
             <input
               type="text"
-              placeholder="Buscar..."
+              placeholder="Buscar por el nombre de la pelicula..."
               value={searchQuery}
               onChange={handleSearchChange}
               className="navbar-search-input"
+              ref={searchInputRef}
             />
           </div>
         )}

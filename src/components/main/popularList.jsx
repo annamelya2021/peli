@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { fetchPopularMovies, fetchGenreMovie } from "../../services/api";
 import MovieCard from "./movieCard";
-import "./movieList.css";
+import "./popularList.css";
 
-const MovieList = ({ selectGenres, searchResults, genres }) => {
+const PopularList = ({ selectGenres, searchResults, genres }) => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
@@ -99,14 +99,10 @@ const MovieList = ({ selectGenres, searchResults, genres }) => {
   );
 };
 
-MovieList.propTypes = {
-  selectGenres: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-    PropTypes.array,
-  ]),
+PopularList.propTypes = {
+  selectGenres: PropTypes.number,
   searchResults: PropTypes.array,
   genres: PropTypes.array,
 };
 
-export default MovieList;
+export default PopularList;
