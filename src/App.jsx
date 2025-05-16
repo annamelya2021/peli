@@ -3,7 +3,6 @@ import {
   HashRouter as Router,
   Routes,
   Route,
-  Navigate,
   useLocation,
 } from "react-router-dom";
 
