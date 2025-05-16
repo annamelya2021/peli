@@ -185,7 +185,7 @@ export const Navbar = ({ setSelectGenres, setSearchResults, genres }) => {
           </NavLink>
         )}
 
-        {!isHomePage && !isFavoritePage && (
+        {isLoggedIn && !isHomePage && !isFavoritePage && (
           <div className="navbar-search">
             <input
               type="text"
