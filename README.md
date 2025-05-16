@@ -22,9 +22,8 @@ cd nombre-del-repositorio
 npm install
 ```
 
-4 poner en marcha - npm run dev
-
-5. entra con cualquier email(falso) y contraseña
+4. poner en marcha - npm run dev
+5. entrar con cualquier email(falso) y contraseña
 
 ### Conocimientos requeridos
 
