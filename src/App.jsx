@@ -21,6 +21,7 @@ import { Navbar } from "./components/navbar/navbar.jsx";
 import SimpleSlider from "./components/main/simpleSlider";
 import PopularList from "./components/main/popularList.jsx";
 import BusquedaList from "./components/main/busquedaList.jsx";
+import NotFound from "./components/main/notFound.jsx";
 
 function AppContent() {
   const location = useLocation();
@@ -96,7 +97,8 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* <Route path="*" element={<Navigate to="/" />} /> */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       <Footer />
