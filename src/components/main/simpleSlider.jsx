@@ -25,18 +25,12 @@ function SimpleSlider({ movies }) {
   }, [handleResize]);
 
   const nextSlide = useCallback(() => {
-    setStartIndex((prev) =>
-      prev + visibleCount >= movies.length ? 0 : prev + visibleCount
-    );
-  }, [movies.length, visibleCount]);
+    setStartIndex((prev) => (prev + 1) % movies.length);
+  }, [movies.length]);
 
-  const prevSlide = () => {
-    setStartIndex((prev) =>
-      prev - visibleCount < 0
-        ? Math.max(movies.length - visibleCount, 0)
-        : prev - visibleCount
-    );
-  };
+  const prevSlide = useCallback(() => {
+    setStartIndex((prev) => (prev - 1 + movies.length) % movies.length);
+  }, [movies.length]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,7 +39,10 @@ function SimpleSlider({ movies }) {
     return () => clearInterval(interval);
   }, [nextSlide]);
 
-  const visibleMovies = movies.slice(startIndex, startIndex + visibleCount);
+  const visibleMovies = Array.from(
+    { length: visibleCount },
+    (_, i) => movies[(startIndex + i) % movies.length]
+  );
 
   const getCardClassName = (index) => {
     const centerIndex = Math.floor(visibleCount / 2);
