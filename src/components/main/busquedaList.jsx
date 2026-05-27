@@ -92,7 +92,7 @@ const BusquedaList = ({ selectGenres, searchResults = null, genres }) => {
       ) : movies.length === 0 && hasSearched ? (
         <div className="no-results">
           <h2>No se han encontrado resultados, inténtalo de nuevo</h2>
-          <img src="/peli/694e3d940cd7.jpeg" alt="" />
+          <img src="/superpeli/694e3d940cd7.jpeg" alt="" />
         </div>
       ) : (
         movies.map((movie) => (

@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-      // Перенаправлення на /peli/ з підтримкою внутрішніх шляхів
+      // Перенаправлення на /superpeli/ з підтримкою внутрішніх шляхів
       const path = window.location.pathname;
-      if (path.startsWith('/peli')) {
-        window.location.href = '/peli/#' + path.replace('/peli', '');
+      if (path.startsWith('/superpeli')) {
+        window.location.href = '/superpeli/#' + path.replace('/superpeli', '');
       } else {
-        window.location.href = '/peli/';
+        window.location.href = '/superpeli/';
       }
     </script>
   </head>
   <body>
     <h1>Redirecting...</h1>
-    <a href="/peli/">Click here if you are not redirected</a>
+    <a href="/superpeli/">Click here if you are not redirected</a>
   </body>
 </html>
